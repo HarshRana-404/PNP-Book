@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragments.FoodsFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Toolbar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/main_color">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:text="Patnagar Panipuri"
+                        android:textStyle="bold"
+                        android:textSize="21sp"
+                        android:textColor="@color/white"
+                        android:layout_centerVertical="true"
+                        />
+                    <TextView
+                        android:id="@+id/tv_tb_add_item"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:left="@drawable/add_ic"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginRight="16dp"
+                        android:drawableLeft="@drawable/add_ic"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:text="Add Item"
+                        android:textColor="@color/white"
+                        android:layout_centerVertical="true"
+                        android:clickable="true"
+                        android:background="?attr/selectableItemBackground"
+                        android:paddingVertical="4dp"
+                        android:paddingHorizontal="8dp"
+                        />
+
+                </RelativeLayout>
+
+            </Toolbar>
+
+        </com.google.android.material.appbar.AppBarLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_foods"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

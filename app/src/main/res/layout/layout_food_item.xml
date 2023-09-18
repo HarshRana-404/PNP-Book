@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="4dp"
+    android:id="@+id/cv_food_item"
+    android:clickable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/tv_food_index"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:text="1"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="@color/main_color"
+            android:gravity="center"
+            android:background="@drawable/food_item_index_bg"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp">
+
+            <TextView
+                android:id="@+id/tv_food_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:textColor="@color/brown"
+                android:text="Dahi Puri"
+                android:layout_marginRight="64dp"/>
+
+            <TextView
+                android:id="@+id/tv_food_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/brown"
+                android:text="₹50/-"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/price_bg"
+                android:paddingVertical="4dp"
+                android:paddingHorizontal="8dp"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

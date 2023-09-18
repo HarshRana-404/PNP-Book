@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mi_sale"
+        android:icon="@drawable/rupee_ic"
+        android:title="Sale" />
+    <item
+        android:id="@+id/mi_foods"
+        android:icon="@drawable/food_ic"
+        android:title="Foods" />
+    <item
+        android:id="@+id/mi_stock"
+        android:icon="@drawable/stock_ic"
+        android:title="Stock" />
+    <item
+        android:id="@+id/mi_analysis"
+        android:icon="@drawable/bars_ic"
+        android:title="Analysis" />
+
+</menu>
