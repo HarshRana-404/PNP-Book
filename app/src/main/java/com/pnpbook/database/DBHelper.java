@@ -6,21 +6,85 @@ import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
 public class DBHelper extends SQLiteOpenHelper {
+    Context context;
     public DBHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, @Nullable DatabaseErrorHandler errorHandler) {
         super(context, "pnp_db", factory, version, errorHandler);
+        this.context = context;
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
+        }
+        catch (Exception e) {}
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         try{
-            db.execSQL("CREATE TABLE tb (col CHAR(10))");
+            db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
         }
         catch (Exception e) {}
-        db.execSQL("INSERT INTO tb VALUES ('ch1')");
+    }
+    public void addFoodItem(String foodIndex, String foodName, String foodPrice){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("INSERT INTO food_items VALUES('1', '"+foodName+"', '"+foodPrice+"')");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void removeAll(){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("DELETE FROM food_items");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void removeFoodItem(String foodName){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("DELETE FROM food_items WHERE food_name = '"+foodName+"'");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void updateFoodItem(String foodName, String foodNameNew, String foodPrice){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("UPDATE food_items SET food_name = '"+foodNameNew+"', food_price = '"+foodPrice+"' WHERE food_name = '"+foodName+"'");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public int getItemCount(){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor csr = db.rawQuery("SELECT COUNT(food_index) FROM food_items", null);
+        int itemCount=0;
+        while (csr.moveToNext()){
+            itemCount = csr.getInt(0);
+        }
+        return itemCount;
+    }
+    public Cursor getFoodItems(){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor csr = db.rawQuery("SELECT * FROM food_items", null);
+        return csr;
+    }
+    public int getFoodItemPrice(String foodName){
+        int pr = 0;
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            Cursor csr = db.rawQuery("SELECT food_price FROM food_items WHERE food_name = '"+foodName+"'", null);
+            while(csr.moveToNext()){
+                pr = Integer.parseInt(csr.getString(0));
+            }
+        } catch (Exception e) {}
+        return pr;
     }
 
     @Override
