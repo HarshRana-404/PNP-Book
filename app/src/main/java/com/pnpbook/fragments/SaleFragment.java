@@ -57,8 +57,7 @@ public class SaleFragment extends Fragment {
 
     Spinner spFoodItem;
     EditText etFoodQuantity;
-    TextView tvItemValue;
-
+    public static TextView tvItemValue, tvTodaySale;
     public static RecyclerView rvSales;
 
     public static SalesAdapter salesAdapter;
@@ -95,13 +94,14 @@ public class SaleFragment extends Fragment {
 
         fabAddSaleItem = view.findViewById(R.id.fab_add_sale_item);
 
-        contextGain(getContext());
+        tvTodaySale = view.findViewById(R.id.tv_sale_today_sale);
 
+        contextGain(getContext());
         try {
             rvSales = view.findViewById(R.id.rv_sale);
             refreshRV();
         } catch (Exception e) {
-            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
         }
         refreshLayoutValues();
         fabAddSaleItem.setOnClickListener(new View.OnClickListener() {
@@ -233,17 +233,19 @@ public class SaleFragment extends Fragment {
         String todayDate = sdf.format(cl.getTime());
         return todayDate;
     }
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     public static void refreshRV(){
         try {
             alSales.clear();
             csr = dbh.getSaleByDate(getCurrentDate());
             int itemCnt=1;
+            int todaysTotal=0;
             while (csr.moveToNext()){
                 String fName = csr.getString(1);
                 int fQty = Integer.parseInt(csr.getString(2));
                 int fPrice = dbh.getPriceByFoodName(fName);
                 int fTotal = (fQty*fPrice);
+                todaysTotal = (fTotal+todaysTotal);
                 alSales.add(new SalesModel(itemCnt, fName, fQty, fPrice, fTotal));
                 itemCnt++;
             }
@@ -251,6 +253,7 @@ public class SaleFragment extends Fragment {
             salesAdapter = new SalesAdapter(con, alSales);
             rvSales.setAdapter(salesAdapter);
             salesAdapter.notifyDataSetChanged();
+            tvTodaySale.setText("Today's Sale: ₹"+(todaysTotal));
         } catch (Exception e) {
             Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
         }

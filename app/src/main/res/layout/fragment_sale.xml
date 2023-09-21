@@ -8,11 +8,24 @@
     android:layout_marginBottom="?attr/actionBarSize"
     >
 
+        <TextView
+            android:id="@+id/tv_sale_today_sale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Today's Sale: "
+            android:textStyle="bold"
+            android:textSize="25sp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginVertical="20dp"
+            />
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_sale"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:orientation="vertical"
+        android:layout_below="@id/tv_sale_today_sale"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_sale_item"
