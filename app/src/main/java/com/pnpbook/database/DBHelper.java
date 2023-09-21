@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+
 public class DBHelper extends SQLiteOpenHelper {
     Context context;
     public DBHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version, @Nullable DatabaseErrorHandler errorHandler) {
@@ -18,6 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
+            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_price CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -26,6 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
+            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_quantity CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -41,6 +46,55 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             SQLiteDatabase db = getWritableDatabase();
             db.execSQL("DELETE FROM food_items");
+            db.execSQL("DELETE FROM sale");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public Boolean itemPresentInSale(String saleDate, String foodName){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor csr = db.rawQuery("SELECT food_quantity FROM sale WHERE food_name = '"+foodName+"' AND sale_date = '"+saleDate+"'", null);
+        int itemCount=0;
+        while (csr.moveToNext()){
+            itemCount++;
+        }
+        if(itemCount==1){
+            return true;
+        }
+        return false;
+    }
+    public Cursor getSaleByDate(String saleDate){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor csr = db.rawQuery("SELECT * FROM sale WHERE sale_date = '"+saleDate+"'", null);
+        return csr;
+    }
+    public int getPriceByFoodName(String foodName){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor csr = db.rawQuery("SELECT food_price FROM food_items WHERE food_name = '"+foodName+"'", null);
+        int pr=0;
+        while (csr.moveToNext()){
+            pr = Integer.parseInt(csr.getString(0));
+        }
+        return pr;
+    }
+    public void updateSale(String saleDate, String foodName, String foodQuantity){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            Cursor csr = db.rawQuery("SELECT food_quantity FROM sale WHERE food_name = '"+foodName+"' AND sale_date = '"+saleDate+"'", null);
+            int qty=0;
+            while (csr.moveToNext()){
+                qty = Integer.parseInt(csr.getString(0));
+            }
+            qty = qty + Integer.valueOf(foodQuantity);
+            db.execSQL("UPDATE sale SET food_quantity = '"+qty+"' WHERE food_name = '"+foodName+"' AND sale_date = '"+saleDate+"'");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void insertItem(String foodName, String foodQuantity){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("INSERT INTO sale VALUES('"+getCurrentDate()+"', '"+foodName+"', '"+foodQuantity+"')");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
@@ -85,6 +139,12 @@ public class DBHelper extends SQLiteOpenHelper {
             }
         } catch (Exception e) {}
         return pr;
+    }
+    public static String getCurrentDate(){
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String todayDate = sdf.format(cl.getTime());
+        return todayDate;
     }
 
     @Override

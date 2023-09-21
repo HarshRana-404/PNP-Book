@@ -33,10 +33,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pnpbook.MainActivity;
 import com.pnpbook.R;
 import com.pnpbook.adapters.FoodsAdapter;
+import com.pnpbook.adapters.SalesAdapter;
 import com.pnpbook.database.DBHelper;
 import com.pnpbook.models.FoodsModel;
+import com.pnpbook.models.SalesModel;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -48,11 +53,18 @@ public class SaleFragment extends Fragment {
 
     FloatingActionButton fabAddSaleItem;
     BottomSheetDialog bsAddSaleItem;
-    DBHelper dbh;
+    public static DBHelper dbh;
 
     Spinner spFoodItem;
     EditText etFoodQuantity;
     TextView tvItemValue;
+
+    public static RecyclerView rvSales;
+
+    public static SalesAdapter salesAdapter;
+    public static ArrayList<SalesModel> alSales = new ArrayList<>();
+
+    public static Cursor csr;
 
     public static Context con;
 
@@ -74,17 +86,23 @@ public class SaleFragment extends Fragment {
     }
 
     @Override
-    @SuppressLint("MissingInflatedId")
+    @SuppressLint({"MissingInflatedId", "NotifyDataSetChanged"})
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_sale, container, false);
 
-        dbh = new DBHelper(getContext(), "pnp_db", null, 1, null);
+        dbh = new DBHelper(getContext(), null, null, 1, null);
 
         fabAddSaleItem = view.findViewById(R.id.fab_add_sale_item);
 
         contextGain(getContext());
 
+        try {
+            rvSales = view.findViewById(R.id.rv_sale);
+            refreshRV();
+        } catch (Exception e) {
+            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
+        }
         refreshLayoutValues();
         fabAddSaleItem.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,16 +124,23 @@ public class SaleFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         try {
-
                             String foodItem="";
                             String foodQuantity="";
+                            // date, item_name, item_qty
                             foodItem = spFoodItem.getSelectedItem().toString()+"";
                             foodQuantity = etFoodQuantity.getText().toString()+"";
-                            if(foodItem.equals("") || foodQuantity.equals("")){
-
+                            if(foodItem.equals("") || foodQuantity.equals("")){}
+                            else{
+                                if(dbh.itemPresentInSale(getCurrentDate(), foodItem)){
+                                    dbh.updateSale(getCurrentDate(), foodItem, foodQuantity);
+                                }else{
+                                    dbh.insertItem(foodItem, foodQuantity);
+                                }
+                                bsAddSaleItem.dismiss();
+                                refreshRV();
                             }
                         } catch (Exception e) {
-
+                            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -148,6 +173,7 @@ public class SaleFragment extends Fragment {
                         if(etFoodQuantity.getText().toString().equals("")){
                             etFoodQuantity.setText("1");
                         }
+                        refreshLayoutValues();
                     }
                     @Override
                     public void afterTextChanged(Editable editable) {}
@@ -200,5 +226,33 @@ public class SaleFragment extends Fragment {
     }
     public void contextGain(Context con){
         SaleFragment.con = con;
+    }
+    public static String getCurrentDate(){
+        Calendar cl = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String todayDate = sdf.format(cl.getTime());
+        return todayDate;
+    }
+    @SuppressLint("NotifyDataSetChanged")
+    public static void refreshRV(){
+        try {
+            alSales.clear();
+            csr = dbh.getSaleByDate(getCurrentDate());
+            int itemCnt=1;
+            while (csr.moveToNext()){
+                String fName = csr.getString(1);
+                int fQty = Integer.parseInt(csr.getString(2));
+                int fPrice = dbh.getPriceByFoodName(fName);
+                int fTotal = (fQty*fPrice);
+                alSales.add(new SalesModel(itemCnt, fName, fQty, fPrice, fTotal));
+                itemCnt++;
+            }
+            rvSales.setLayoutManager(new LinearLayoutManager(con));
+            salesAdapter = new SalesAdapter(con, alSales);
+            rvSales.setAdapter(salesAdapter);
+            salesAdapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
+        }
     }
 }

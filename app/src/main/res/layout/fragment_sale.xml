@@ -8,6 +8,12 @@
     android:layout_marginBottom="?attr/actionBarSize"
     >
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_sale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_sale_item"
         android:layout_width="wrap_content"

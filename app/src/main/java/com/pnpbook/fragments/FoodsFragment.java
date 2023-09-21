@@ -131,6 +131,19 @@ public class FoodsFragment extends Fragment {
                 cnt++;
             }
             foodsAdapter.notifyDataSetChanged();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    @SuppressLint("NotifyDataSetChanged")
+    public static void refreshOnlyRV(){
+        alFoodsModel.clear();
+        int cnt=1;
+        Cursor csr = dbh.getFoodItems();
+        while (csr.moveToNext()){
+            alFoodsModel.add(new FoodsModel(cnt, csr.getString(1), Integer.parseInt(csr.getString(2))));
+            cnt++;
+        }
+        foodsAdapter.notifyDataSetChanged();
     }
 }

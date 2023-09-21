@@ -98,12 +98,19 @@ public class FoodsAdapter extends RecyclerView.Adapter<FoodsAdapter.ViewHolder> 
                 ivClose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        di.dismiss();
-                        dbh.removeFoodItem(alFoodsModel.get(position).foodName);
-                        SaleFragment sf = null;
-                        sf.contextGain(context);
-                        sf.refreshSpinnerValues();
-                        Toast.makeText(context, alFoodsModel.get(position).foodName + " deleted!", Toast.LENGTH_SHORT).show();
+                        try{
+                            di.dismiss();
+                            dbh.removeFoodItem(alFoodsModel.get(position).foodName);
+                            SaleFragment sf = new SaleFragment();
+                            sf.contextGain(context);
+                            sf.refreshSpinnerValues();
+                            FoodsFragment ff = new FoodsFragment();
+                            ff.contextGain(context);
+                            FoodsFragment.refreshOnlyRV();
+                            Toast.makeText(context, alFoodsModel.get(position).foodName + " deleted!", Toast.LENGTH_SHORT).show();
+                        } catch (Exception e) {
+//                            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 });
             }
