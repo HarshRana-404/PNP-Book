@@ -140,6 +140,22 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {}
         return pr;
     }
+    public Cursor getDates(){
+        Cursor csr=null;
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            csr = db.rawQuery("SELECT sale_date FROM sale GROUP BY sale_date ORDER BY sale_date DESC", null);
+        } catch (Exception e) {}
+        return csr;
+    }
+    public Cursor getWholeData(){
+        Cursor csr=null;
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            csr = db.rawQuery("SELECT * FROM sale", null);
+        } catch (Exception e) {}
+        return csr;
+    }
     public static String getCurrentDate(){
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

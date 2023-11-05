@@ -1,17 +1,18 @@
 package com.pnpbook.models;
 
-public class SalesModel {
-    public int foodIndex;
-    public String foodName;
-    public int foodQuantity;
-    public int foodPrice;
-    public int foodTotal;
+import java.util.ArrayList;
 
-    public SalesModel(int foodIndex, String foodName, int foodQuantity, int foodPrice, int foodTotal) {
-        this.foodIndex = foodIndex;
-        this.foodName = foodName;
-        this.foodQuantity = foodQuantity;
-        this.foodPrice = foodPrice;
-        this.foodTotal = foodTotal;
+public class SalesModel {
+    public String saleDate;
+    public String totalSale;
+    public ArrayList<ExpandableSalesModel> alExpandableSale;
+
+    public boolean isExpanded=false;
+
+    public SalesModel(String saleDate, String totalSale, ArrayList<ExpandableSalesModel> alExpandableSale){
+        this.saleDate = saleDate;
+        this.totalSale = "₹"+totalSale+"/-";
+        this.alExpandableSale = alExpandableSale;
     }
+
 }

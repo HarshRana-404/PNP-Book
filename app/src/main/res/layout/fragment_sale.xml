@@ -5,19 +5,33 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.SaleFragment"
-    android:layout_marginBottom="?attr/actionBarSize"
+    android:layout_marginBottom="32dp"
     >
 
-        <TextView
-            android:id="@+id/tv_sale_today_sale"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Today's Sale: "
-            android:textStyle="bold"
-            android:textSize="25sp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginVertical="20dp"
-            />
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/abl_sale"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/main_color">
+
+        <Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_sale_today_sale"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sales"
+                android:textStyle="bold"
+                android:textSize="25sp"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                />
+        </Toolbar>
+
+
+    </com.google.android.material.appbar.AppBarLayout>
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -25,7 +39,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_below="@id/tv_sale_today_sale"/>
+        android:layout_below="@id/abl_sale"/>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_add_sale_item"

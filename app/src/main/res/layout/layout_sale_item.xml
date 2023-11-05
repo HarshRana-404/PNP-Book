@@ -4,85 +4,53 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="4dp"
     android:id="@+id/ll_sale_item"
-    android:clickable="true"
-    android:foreground="?attr/selectableItemBackground"
     android:orientation="vertical"
     android:gravity="center_vertical">
 
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/rl_expander"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical">
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="4dp"
+        android:foreground="?attr/selectableItemBackground"
+        android:layout_marginTop="8dp"
+        android:background="@color/gray"
+        >
 
         <TextView
-            android:id="@+id/tv_sale_food_index"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:text="1"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/main_color"
-            android:gravity="center"
-            android:background="@drawable/food_item_index_bg"
-            android:layout_centerVertical="true"/>
-
-        <LinearLayout
-            android:id="@+id/ll_vertical_listing"
+            android:id="@+id/tv_sale_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="10dp"
-            android:layout_toRightOf="@id/tv_sale_food_index">
+            android:text="Date: "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            />
+        <TextView
+            android:id="@+id/tv_date_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹500/-"
+            android:textSize="18sp"
+            android:layout_centerHorizontal="true"
+            android:textStyle="bold"
+            />
+        <ImageView
+            android:id="@+id/iv_arrow_down"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_down"
+            android:layout_alignParentRight="true"
+            android:textStyle="bold"
+            />
 
-            <TextView
-                android:id="@+id/tv_sale_food_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/brown"
-                android:text="ItemName"
-                android:layout_marginBottom="4dp"
-                />
-            <TextView
-                android:id="@+id/tv_sale_food_quantity"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/brown"
-                android:text="ItemQty"
-                android:layout_marginBottom="4dp"
-                />
-            <TextView
-                android:id="@+id/tv_sale_food_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/brown"
-                android:text="ItemPrice"
-                android:layout_marginBottom="4dp"
-                />
-
-        </LinearLayout>
-
-            <TextView
-                android:id="@+id/tv_sale_food_total"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                android:textColor="@color/brown"
-                android:text="ItemTotal"
-                android:textAlignment="textEnd"
-                android:background="@drawable/price_bg"
-                android:padding="20dp"
-                android:layout_marginLeft="80dp"
-                />
-
-    </LinearLayout>
+    </RelativeLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/expandable_sales_rv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
 
 </LinearLayout>

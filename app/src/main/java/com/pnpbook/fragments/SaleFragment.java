@@ -2,18 +2,16 @@ package com.pnpbook.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.os.Bundle;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,29 +24,23 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.pnpbook.MainActivity;
 import com.pnpbook.R;
-import com.pnpbook.adapters.FoodsAdapter;
-import com.pnpbook.adapters.SalesAdapter;
+import com.pnpbook.adapters.ExpandableSalesAdapter;
+import com.pnpbook.adapters.SaleAdapter;
 import com.pnpbook.database.DBHelper;
-import com.pnpbook.models.FoodsModel;
+import com.pnpbook.models.ExpandableSalesModel;
 import com.pnpbook.models.SalesModel;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SaleFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import kotlinx.coroutines.selects.WhileSelectKt;
+
 public class SaleFragment extends Fragment {
 
     FloatingActionButton fabAddSaleItem;
@@ -58,9 +50,9 @@ public class SaleFragment extends Fragment {
     Spinner spFoodItem;
     EditText etFoodQuantity;
     public static TextView tvItemValue, tvTodaySale;
-    public static RecyclerView rvSales;
 
-    public static SalesAdapter salesAdapter;
+    public static RecyclerView rvSales;
+    public static SaleAdapter saleAdapter;
     public static ArrayList<SalesModel> alSales = new ArrayList<>();
 
     public static Cursor csr;
@@ -99,11 +91,14 @@ public class SaleFragment extends Fragment {
         contextGain(getContext());
         try {
             rvSales = view.findViewById(R.id.rv_sale);
+            rvSales.setLayoutManager(new LinearLayoutManager(con));
+            saleAdapter = new SaleAdapter(con, alSales);
+            rvSales.setAdapter(saleAdapter);
             refreshRV();
+            refreshLayoutValues();
         } catch (Exception e) {
 //            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
         }
-        refreshLayoutValues();
         fabAddSaleItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -236,26 +231,39 @@ public class SaleFragment extends Fragment {
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     public static void refreshRV(){
         try {
+            ArrayList<String> alDates = getDates();
             alSales.clear();
-            csr = dbh.getSaleByDate(getCurrentDate());
-            int itemCnt=1;
-            int todaysTotal=0;
-            while (csr.moveToNext()){
-                String fName = csr.getString(1);
-                int fQty = Integer.parseInt(csr.getString(2));
-                int fPrice = dbh.getPriceByFoodName(fName);
-                int fTotal = (fQty*fPrice);
-                todaysTotal = (fTotal+todaysTotal);
-                alSales.add(new SalesModel(itemCnt, fName, fQty, fPrice, fTotal));
-                itemCnt++;
+            for (int i=0;i<alDates.size();i++) {
+                Cursor csr = dbh.getSaleByDate(alDates.get(i));
+                int itemCnt=1;
+                int todaysTotal=0;
+                ArrayList<ExpandableSalesModel> alExpandableSales = new ArrayList<>();
+                while (csr.moveToNext()){
+                    String fName = csr.getString(1);
+                    int fQty = Integer.parseInt(csr.getString(2));
+                    int fPrice = dbh.getPriceByFoodName(fName);
+                    int fAmount = (fQty*fPrice);
+                    todaysTotal = (fAmount+todaysTotal);
+                    alExpandableSales.add(new ExpandableSalesModel(itemCnt+".", fName, fQty, fAmount));
+                    itemCnt++;
+                }
+                String date[] = alDates.get(i).split("-");
+//                tvTodaySale.setText("Today's Sale: ₹"+(todaysTotal));
+                alSales.add(new SalesModel(date[2]+"-"+date[1]+"-"+date[0], todaysTotal+"", alExpandableSales));
+                saleAdapter.notifyDataSetChanged();
             }
-            rvSales.setLayoutManager(new LinearLayoutManager(con));
-            salesAdapter = new SalesAdapter(con, alSales);
-            rvSales.setAdapter(salesAdapter);
-            salesAdapter.notifyDataSetChanged();
-            tvTodaySale.setText("Today's Sale: ₹"+(todaysTotal));
+            alDates.clear();
         } catch (Exception e) {
-            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
+            Log.e("wow", e.toString());
         }
+    }
+
+    public static ArrayList<String> getDates(){
+        ArrayList<String> alDates = new ArrayList<>();
+        csr = dbh.getDates();
+        while (csr.moveToNext()){
+            alDates.add(csr.getString(0));
+        }
+        return alDates;
     }
 }

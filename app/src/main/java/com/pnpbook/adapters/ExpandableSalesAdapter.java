@@ -2,50 +2,38 @@ package com.pnpbook.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pnpbook.R;
 import com.pnpbook.database.DBHelper;
-import com.pnpbook.fragments.FoodsFragment;
-import com.pnpbook.fragments.SaleFragment;
-import com.pnpbook.models.FoodsModel;
-import com.pnpbook.models.SalesModel;
+import com.pnpbook.models.ExpandableSalesModel;
 
 import java.util.ArrayList;
 
-public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.ViewHolder> {
+public class ExpandableSalesAdapter extends RecyclerView.Adapter<ExpandableSalesAdapter.ViewHolder> {
 
     Context context;
-    ArrayList<SalesModel> alSalesModel;
-
-    ViewGroup container=null;
+    ArrayList<ExpandableSalesModel> alExpandableSalesModel;
     DBHelper dbh;
 
-    public SalesAdapter(Context context, ArrayList<SalesModel> alSalesModel) {
+    public ExpandableSalesAdapter(Context context, ArrayList<ExpandableSalesModel> alExpandableSalesModel) {
         this.context = context;
-        this.alSalesModel = alSalesModel;
-    }
-    public SalesAdapter(ViewGroup container) {
-        this.container = container;
+        this.alExpandableSalesModel = alExpandableSalesModel;
     }
 
     @NonNull
     @Override
-    public SalesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.layout_sale_item, parent, false);
+    public ExpandableSalesAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.expandable_sale_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(view);
         dbh = new DBHelper(context, null, null,  1, null);
         return viewHolder;
@@ -53,12 +41,15 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.ViewHolder> 
 
     @SuppressLint("SetTextI18n")
     @Override
-    public void onBindViewHolder(@NonNull SalesAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        holder.tvFoodIndex.setText(alSalesModel.get(position).foodIndex+"");
-        holder.tvFoodName.setText(alSalesModel.get(position).foodName);
-        holder.tvFoodQuantity.setText(alSalesModel.get(position).foodQuantity+"");
-        holder.tvFoodPrice.setText("₹"+alSalesModel.get(position).foodPrice+"/-");
-        holder.tvFoodTotal.setText("₹"+alSalesModel.get(position).foodTotal+"/-");
+    public void onBindViewHolder(@NonNull ExpandableSalesAdapter.ViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        try {
+            holder.tvFoodIndex.setText(alExpandableSalesModel.get(position).foodIndex+"");
+            holder.tvFoodName.setText(alExpandableSalesModel.get(position).foodName);
+            holder.tvFoodQuantity.setText(alExpandableSalesModel.get(position).foodQuantity+"");
+            holder.tvFoodAmount.setText("₹"+ alExpandableSalesModel.get(position).foodAmount);
+        } catch (Exception e) {
+            Log.e("wow", e+"");
+        }
 //        holder.tvFoodIndex.setText(alFoodsModel.get(position).foodIndex+"");
 //        holder.tvFoodName.setText(alFoodsModel.get(position).foodName);
 //        holder.tvFoodPrice.setText("₹"+alFoodsModel.get(position).foodPrice+"/-");
@@ -116,22 +107,21 @@ public class SalesAdapter extends RecyclerView.Adapter<SalesAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return alSalesModel.size();
+        return alExpandableSalesModel.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout llSaleItem;
-        TextView tvFoodIndex, tvFoodName, tvFoodQuantity, tvFoodPrice, tvFoodTotal;
+        TextView tvFoodIndex, tvFoodName, tvFoodQuantity, tvFoodAmount;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
 
             llSaleItem = itemView.findViewById(R.id.ll_sale_item);
-            tvFoodIndex = itemView.findViewById(R.id.tv_sale_food_index);
-            tvFoodName = itemView.findViewById(R.id.tv_sale_food_name);
-            tvFoodQuantity = itemView.findViewById(R.id.tv_sale_food_quantity);
-            tvFoodPrice = itemView.findViewById(R.id.tv_sale_food_price);
-            tvFoodTotal = itemView.findViewById(R.id.tv_sale_food_total);
+            tvFoodIndex = itemView.findViewById(R.id.tv_exp_food_index);
+            tvFoodName = itemView.findViewById(R.id.tv_exp_food_name);
+            tvFoodQuantity = itemView.findViewById(R.id.tv_exp_food_qty);
+            tvFoodAmount = itemView.findViewById(R.id.tv_exp_food_amt);
         }
     }
 }
