@@ -21,7 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
-            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_price CHAR(10))");
+            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_quantity CHAR(10))");
         }
         catch (Exception e) {}
     }
