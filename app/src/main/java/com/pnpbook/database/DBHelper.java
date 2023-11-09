@@ -113,7 +113,7 @@ public class DBHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             db.execSQL("DELETE FROM sale WHERE food_name = '"+foodName+"' AND sale_date = '"+foodDate+"'");
         } catch (Exception e) {
-            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
     public void updateFoodInSale(String foodName, String foodQty, String foodDate){
@@ -121,7 +121,7 @@ public class DBHelper extends SQLiteOpenHelper {
             SQLiteDatabase db = getWritableDatabase();
             db.execSQL("UPDATE sale SET food_quantity = '"+foodQty+"' WHERE food_name = '"+foodName+"' AND sale_date = '"+foodDate+"'");
         } catch (Exception e) {
-            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
     public void updateFoodItem(String foodName, String foodNameNew, String foodPrice){

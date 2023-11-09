@@ -120,6 +120,7 @@ public class ExpandableSalesAdapter extends RecyclerView.Adapter<ExpandableSales
                             if(etItemPrice.getText().toString().equals("")){
                                 Toast.makeText(context, "Quantity is required!", Toast.LENGTH_SHORT).show();
                             }else{
+                                Toast.makeText(context, saleDate, Toast.LENGTH_SHORT).show();
                                 dbh.updateFoodInSale(foodName, etItemPrice.getText().toString(), saleDate);
                                 SaleFragment.refreshRV();
                                 di.dismiss();
