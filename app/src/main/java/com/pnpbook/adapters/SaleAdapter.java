@@ -68,8 +68,8 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
                         String finalBill=title, item;
                         while (csr.moveToNext()){
                             String fName = csr.getString(1);
-                            int fQty = Integer.parseInt(csr.getString(2));
-                            int fPrice = dbh.getPriceByFoodName(fName);
+                            int fQty = Integer.parseInt(csr.getString(3));
+                            int fPrice = Integer.parseInt(csr.getString(2));
                             int fAmount = (fQty*fPrice);
                             item = fName + "\n";
                             item += fQty + " x ";
@@ -82,7 +82,7 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
                         Intent inShare = new Intent(Intent.ACTION_SEND);
                         inShare.setType("text/plain");
                         inShare.putExtra(Intent.EXTRA_TEXT, finalBill.trim());
-                        inShare.putExtra(Intent.EXTRA_SUBJECT, title);
+                        inShare.putExtra(Intent.EXTRA_SUBJECT, alSales.get(position).saleDate);
                         context.startActivity(Intent.createChooser(inShare, "Share"));
                     } catch (Exception e) {
                         Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();

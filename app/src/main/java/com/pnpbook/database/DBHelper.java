@@ -21,7 +21,7 @@ public class DBHelper extends SQLiteOpenHelper {
         SQLiteDatabase db = getWritableDatabase();
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
-            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_quantity CHAR(10))");
+            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_price CHAR(100), food_quantity CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -30,7 +30,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
-            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_quantity CHAR(10))");
+            db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100),  food_price CHAR(100), food_quantity CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -85,8 +85,9 @@ public class DBHelper extends SQLiteOpenHelper {
             while (csr.moveToNext()){
                 qty = Integer.parseInt(csr.getString(0));
             }
-            qty = qty + Integer.valueOf(foodQuantity);
-            db.execSQL("UPDATE sale SET food_quantity = '"+qty+"' WHERE food_name = '"+foodName+"' AND sale_date = '"+saleDate+"'");
+            qty = qty + Integer.parseInt(foodQuantity);
+            int price = getPriceByFoodName(foodName);
+            db.execSQL("UPDATE sale SET food_quantity = '"+qty+"', food_price = '"+price+"' WHERE food_name = '"+foodName+"' AND sale_date = '"+saleDate+"'");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
@@ -94,7 +95,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertItem(String foodName, String foodQuantity){
         try{
             SQLiteDatabase db = getWritableDatabase();
-            db.execSQL("INSERT INTO sale VALUES('"+getCurrentDate()+"', '"+foodName+"', '"+foodQuantity+"')");
+            db.execSQL("INSERT INTO sale VALUES('"+getCurrentDate()+"', '"+foodName+"', '"+getPriceByFoodName(foodName)+"', '"+foodQuantity+"')");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
@@ -105,6 +106,22 @@ public class DBHelper extends SQLiteOpenHelper {
             db.execSQL("DELETE FROM food_items WHERE food_name = '"+foodName+"'");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void removeFoodFromSale(String foodName, String foodDate){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("DELETE FROM sale WHERE food_name = '"+foodName+"' AND sale_date = '"+foodDate+"'");
+        } catch (Exception e) {
+            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void updateFoodInSale(String foodName, String foodQty, String foodDate){
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            db.execSQL("UPDATE sale SET food_quantity = '"+foodQty+"' WHERE food_name = '"+foodName+"' AND sale_date = '"+foodDate+"'");
+        } catch (Exception e) {
+            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
     public void updateFoodItem(String foodName, String foodNameNew, String foodPrice){

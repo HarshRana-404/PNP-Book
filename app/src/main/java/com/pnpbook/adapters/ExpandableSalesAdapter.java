@@ -2,19 +2,27 @@ package com.pnpbook.adapters;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pnpbook.R;
 import com.pnpbook.database.DBHelper;
+import com.pnpbook.fragments.SaleFragment;
 import com.pnpbook.models.ExpandableSalesModel;
 
 import java.util.ArrayList;
@@ -23,11 +31,18 @@ public class ExpandableSalesAdapter extends RecyclerView.Adapter<ExpandableSales
 
     Context context;
     ArrayList<ExpandableSalesModel> alExpandableSalesModel;
+
+    ViewGroup container=null;
     DBHelper dbh;
 
     public ExpandableSalesAdapter(Context context, ArrayList<ExpandableSalesModel> alExpandableSalesModel) {
         this.context = context;
         this.alExpandableSalesModel = alExpandableSalesModel;
+        dbh = new DBHelper(context, null, null,  1, null);
+    }
+
+    public ExpandableSalesAdapter(ViewGroup container) {
+        this.container = container;
     }
 
     @NonNull
@@ -47,6 +62,82 @@ public class ExpandableSalesAdapter extends RecyclerView.Adapter<ExpandableSales
             holder.tvFoodName.setText(alExpandableSalesModel.get(position).foodName);
             holder.tvFoodQuantity.setText(alExpandableSalesModel.get(position).foodQuantity+"");
             holder.tvFoodAmount.setText("₹"+ alExpandableSalesModel.get(position).foodAmount);
+
+            holder.llExpandable.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder adb = new AlertDialog.Builder(context);
+                    View vAddItem = View.inflate(context, R.layout.layout_add_item_ad, container);
+                    DialogInterface di;
+
+                    TextView tvAddTitle = vAddItem.findViewById((R.id.tv_ad_title));
+                    ImageView ivClose = vAddItem.findViewById((R.id.iv_close));
+                    Button btnAddNewItem = vAddItem.findViewById((R.id.btn_add_new_item));
+                    EditText etItemName = vAddItem.findViewById((R.id.et_item_name));
+                    EditText etItemPrice = vAddItem.findViewById((R.id.et_item_price));
+
+                    etItemName.setEnabled(false);
+                    etItemPrice.setHint("Quantity");
+
+                    String saleDate = alExpandableSalesModel.get(position).foodDate;
+                    String foodName = alExpandableSalesModel.get(position).foodName;
+
+                    try{
+                        etItemName.setText(alExpandableSalesModel.get(position).foodName);
+                        etItemPrice.setText(alExpandableSalesModel.get(position).foodQuantity+"");
+                    } catch (Exception e) {
+//                        Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+                    }
+
+                    adb.setView(vAddItem);
+                    di = adb.show();
+
+                    ivClose.setImageResource(R.drawable.delete_ic);
+                    btnAddNewItem.setText("SAVE ITEM DETAILS");
+                    tvAddTitle.setText("Edit Details");
+
+                    etItemPrice.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            if(etItemPrice.getText().toString().equals("0")){
+                                etItemPrice.setText("1");
+                            }
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+
+                        }
+                    });
+                    btnAddNewItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            if(etItemPrice.getText().toString().equals("")){
+                                Toast.makeText(context, "Quantity is required!", Toast.LENGTH_SHORT).show();
+                            }else{
+                                dbh.updateFoodInSale(foodName, etItemPrice.getText().toString(), saleDate);
+                                SaleFragment.refreshRV();
+                                di.dismiss();
+                            }
+                        }
+                    });
+                    ivClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dbh.removeFoodFromSale(foodName, saleDate);
+                            SaleFragment.refreshRV();
+                            di.dismiss();
+                        }
+                    });
+
+                }
+            });
+
         } catch (Exception e) {
             Log.e("wow", e+"");
         }
@@ -113,6 +204,8 @@ public class ExpandableSalesAdapter extends RecyclerView.Adapter<ExpandableSales
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         LinearLayout llSaleItem;
+
+        LinearLayout llExpandable;
         TextView tvFoodIndex, tvFoodName, tvFoodQuantity, tvFoodAmount;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -122,6 +215,7 @@ public class ExpandableSalesAdapter extends RecyclerView.Adapter<ExpandableSales
             tvFoodName = itemView.findViewById(R.id.tv_exp_food_name);
             tvFoodQuantity = itemView.findViewById(R.id.tv_exp_food_qty);
             tvFoodAmount = itemView.findViewById(R.id.tv_exp_food_amt);
+            llExpandable = itemView.findViewById(R.id.ll_exp_sale_item);
         }
     }
 }

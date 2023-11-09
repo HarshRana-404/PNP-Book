@@ -53,6 +53,7 @@ public class SaleFragment extends Fragment {
 
     public static RecyclerView rvSales;
     public static SaleAdapter saleAdapter;
+    public static ExpandableSalesAdapter expandableSalesAdapter;
     public static ArrayList<SalesModel> alSales = new ArrayList<>();
 
     public static Cursor csr;
@@ -93,6 +94,7 @@ public class SaleFragment extends Fragment {
             rvSales = view.findViewById(R.id.rv_sale);
             rvSales.setLayoutManager(new LinearLayoutManager(con));
             saleAdapter = new SaleAdapter(con, alSales);
+            expandableSalesAdapter = new ExpandableSalesAdapter(container);
             rvSales.setAdapter(saleAdapter);
             refreshRV();
             refreshLayoutValues();
@@ -240,11 +242,11 @@ public class SaleFragment extends Fragment {
                 ArrayList<ExpandableSalesModel> alExpandableSales = new ArrayList<>();
                 while (csr.moveToNext()){
                     String fName = csr.getString(1);
-                    int fQty = Integer.parseInt(csr.getString(2));
-                    int fPrice = dbh.getPriceByFoodName(fName);
+                    int fQty = Integer.parseInt(csr.getString(3));
+                    int fPrice = Integer.parseInt(csr.getString(2));
                     int fAmount = (fQty*fPrice);
                     todaysTotal = (fAmount+todaysTotal);
-                    alExpandableSales.add(new ExpandableSalesModel(itemCnt+".", fName, fQty, fAmount));
+                    alExpandableSales.add(new ExpandableSalesModel(itemCnt+".", fName, fQty, fAmount, getCurrentDate()));
                     itemCnt++;
                 }
                 String date[] = alDates.get(i).split("-");
