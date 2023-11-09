@@ -246,7 +246,7 @@ public class SaleFragment extends Fragment {
                     int fPrice = Integer.parseInt(csr.getString(2));
                     int fAmount = (fQty*fPrice);
                     todaysTotal = (fAmount+todaysTotal);
-                    alExpandableSales.add(new ExpandableSalesModel(itemCnt+".", fName, fQty, fAmount, getCurrentDate()));
+                    alExpandableSales.add(new ExpandableSalesModel(itemCnt+".", fName, fQty, fAmount, alDates.get(i)+""));
                     itemCnt++;
                 }
                 String date[] = alDates.get(i).split("-");
