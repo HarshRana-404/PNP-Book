@@ -20,6 +20,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pnpbook.R;
@@ -30,6 +31,7 @@ import java.util.ArrayList;
 public class AnalysisFragment extends Fragment {
 
     Button btnStartDate, btnEndDate;
+    TextView tvGrandTotal;
     ListView rvAnalysis;
 
     String startDate, endDate;
@@ -64,6 +66,7 @@ public class AnalysisFragment extends Fragment {
         rvAnalysis = view.findViewById(R.id.rv_analysis);
         btnStartDate = view.findViewById(R.id.btn_start_date);
         btnEndDate = view.findViewById(R.id.btn_end_date);
+        tvGrandTotal = view.findViewById(R.id.tv_analysis_grand_total);
 
         String today[] = SaleFragment.getCurrentDate().split("-");
 
@@ -112,8 +115,10 @@ public class AnalysisFragment extends Fragment {
         return view;
     }
 
+    @SuppressLint("SetTextI18n")
     public void loadAnalysisData(){
         try {
+            int grandTotal = 0;
             alAnalysis.clear();
             Cursor csr = dbh.getFoodsBetweenDates(startDate, endDate);
             while(csr.moveToNext()){
@@ -125,7 +130,11 @@ public class AnalysisFragment extends Fragment {
                     foodPrice = Integer.parseInt(csrQtyPr.getString(1));
                 }
                 foodTotal = foodQty * foodPrice;
+                grandTotal += foodTotal;
                 alAnalysis.add(foodName+" - " +foodQty + " x "+foodPrice + " = " + foodTotal);
+            }
+            if(grandTotal!=0){
+                tvGrandTotal.setText("Grand Total : " + grandTotal);
             }
             ArrayAdapter<String> ad = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,  alAnalysis);
             rvAnalysis.setAdapter(ad);
