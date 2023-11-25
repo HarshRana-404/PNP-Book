@@ -37,6 +37,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void addFoodItem(String foodIndex, String foodName, String foodPrice){
         try{
             SQLiteDatabase db = getWritableDatabase();
+            foodName = foodName.replaceAll("'", "''");
             db.execSQL("INSERT INTO food_items VALUES('1', '"+foodName+"', '"+foodPrice+"')");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
@@ -68,6 +69,30 @@ public class DBHelper extends SQLiteOpenHelper {
         Cursor csr = db.rawQuery("SELECT * FROM sale WHERE sale_date = '"+saleDate+"'", null);
         return csr;
     }
+
+    public Cursor getFoodsBetweenDates(String startDate, String endDate){
+        Cursor csr=null;
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            csr = db.rawQuery("SELECT food_name FROM sale WHERE sale_date BETWEEN '"+startDate+"' AND '"+endDate+"' GROUP BY food_name", null);
+        } catch (Exception e) {
+            Log.e("wow", e+"");
+        }
+        return csr;
+    }
+
+    public Cursor getFoodQtyBetweenDates(String foodName, String startDate, String endDate){
+        Cursor csr=null;
+        foodName = foodName.replaceAll("'", "''");
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            csr = db.rawQuery("SELECT SUM(food_quantity), food_price FROM sale WHERE sale_date BETWEEN '"+startDate+"' AND '"+endDate+"' AND food_name = '"+foodName+"' ORDER BY sale_date DESC", null);
+        } catch (Exception e) {
+            Log.e("wow", e+"");
+        }
+        return csr;
+    }
+
     public int getPriceByFoodName(String foodName){
         SQLiteDatabase db = getWritableDatabase();
         Cursor csr = db.rawQuery("SELECT food_price FROM food_items WHERE food_name = '"+foodName+"'", null);
@@ -95,6 +120,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertItem(String foodName, String foodQuantity){
         try{
             SQLiteDatabase db = getWritableDatabase();
+            foodName = foodName.replaceAll("'", "''");
             db.execSQL("INSERT INTO sale VALUES('"+getCurrentDate()+"', '"+foodName+"', '"+getPriceByFoodName(foodName)+"', '"+foodQuantity+"')");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
@@ -119,6 +145,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void updateFoodInSale(String foodName, String foodQty, String foodDate){
         try{
             SQLiteDatabase db = getWritableDatabase();
+            foodName = foodName.replaceAll("'", "''");
             db.execSQL("UPDATE sale SET food_quantity = '"+foodQty+"' WHERE food_name = '"+foodName+"' AND sale_date = '"+foodDate+"'");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
@@ -165,12 +192,16 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {}
         return csr;
     }
-    public Cursor getWholeData(){
+    public Cursor getSaleDatesOfCurrentMonth(){
+        String dt[] = getCurrentDate().split("-");
+        String mnYr = dt[0]+"-"+dt[1];
         Cursor csr=null;
         try{
             SQLiteDatabase db = getWritableDatabase();
-            csr = db.rawQuery("SELECT * FROM sale", null);
-        } catch (Exception e) {}
+            csr = db.rawQuery("SELECT sale_date FROM sale WHERE sale_date LIKE '%"+mnYr+"%' GROUP BY sale_date ORDER BY sale_date DESC", null);
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
         return csr;
     }
     public static String getCurrentDate(){

@@ -1,50 +1,49 @@
 package com.pnpbook.fragments;
 
+import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.res.Resources;
+import android.database.Cursor;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import com.pnpbook.R;
+import com.pnpbook.database.DBHelper;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link AnalysisFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.ArrayList;
+
 public class AnalysisFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    Button btnStartDate, btnEndDate;
+    ListView rvAnalysis;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    String startDate, endDate;
+    DBHelper dbh = null;
 
+    Context context;
+
+
+    ArrayList<String> alAnalysis = new ArrayList<>();
     public AnalysisFragment() {
         // Required empty public constructor
     }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment AnalysisFragment.
-     */
-    // TODO: Rename and change types and number of parameters
     public static AnalysisFragment newInstance(String param1, String param2) {
         AnalysisFragment fragment = new AnalysisFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -52,15 +51,86 @@ public class AnalysisFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_analysis, container, false);
+        container.removeAllViews();
+        View view = inflater.inflate(R.layout.fragment_analysis, container, false);
+        this.context = view.getContext();
+        dbh = new DBHelper(getContext(), null, null,  1, null);
+        rvAnalysis = view.findViewById(R.id.rv_analysis);
+        btnStartDate = view.findViewById(R.id.btn_start_date);
+        btnEndDate = view.findViewById(R.id.btn_end_date);
+
+        String today[] = SaleFragment.getCurrentDate().split("-");
+
+        try {
+            btnStartDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DatePickerDialog dp = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            i1 = (i1+1);
+                            startDate = i+"-"+i1+"-"+i2;
+                            btnStartDate.setText(i2+"-"+i1+"-"+i);
+                            if(!btnStartDate.getText().toString().endsWith("e") && !btnEndDate.getText().toString().endsWith("e")){
+                                loadAnalysisData();
+                            }
+                        }
+                    }, Integer.parseInt(today[0]), Integer.parseInt((today[1]))-1, Integer.parseInt(today[2]));
+                    dp.show();
+                }
+            });
+
+            btnEndDate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    DatePickerDialog dp2 = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
+                        @SuppressLint("SetTextI18n")
+                        @Override
+                        public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
+                            i1 = (i1+1);
+                            endDate = i+"-"+i1+"-"+i2;
+                            btnEndDate.setText(i2+"-"+i1+"-"+i);
+                            if(!btnStartDate.getText().toString().endsWith("e") && !btnEndDate.getText().toString().endsWith("e")){
+                                loadAnalysisData();
+                            }
+                        }
+                    }, Integer.parseInt(today[0]), Integer.parseInt(today[1])-1, Integer.parseInt(today[2]));
+                    dp2.show();
+                }
+            });
+        } catch (Exception e) {
+            Log.e("wow", e+"");
+        }
+
+        return view;
+    }
+
+    public void loadAnalysisData(){
+        try {
+            alAnalysis.clear();
+            Cursor csr = dbh.getFoodsBetweenDates(startDate, endDate);
+            while(csr.moveToNext()){
+                String foodName=csr.getString(0);
+                int foodQty=0, foodPrice=0, foodTotal=0;
+                Cursor csrQtyPr = dbh.getFoodQtyBetweenDates(foodName, startDate, endDate);
+                while(csrQtyPr.moveToNext()){
+                    foodQty = Integer.parseInt(csrQtyPr.getString(0));
+                    foodPrice = Integer.parseInt(csrQtyPr.getString(1));
+                }
+                foodTotal = foodQty * foodPrice;
+                alAnalysis.add(foodName+" - " +foodQty + " x "+foodPrice + " = " + foodTotal);
+            }
+            ArrayAdapter<String> ad = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,  alAnalysis);
+            rvAnalysis.setAdapter(ad);
+        } catch (Exception e) {
+            Log.e("wow", e+"");
+        }
     }
 }

@@ -28,6 +28,7 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
 
     Context context;
     ArrayList<SalesModel> alSales;
+    ArrayList<String> alDates = new ArrayList<>();
     ExpandableSalesAdapter expandableSalesAdapter;
     DBHelper dbh;
     public SaleAdapter(Context context, ArrayList<SalesModel> alSales) {
@@ -63,6 +64,30 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
                         String dateFinalDB = dateDB[2]+"-"+dateDB[1]+"-"+dateDB[0];
                         Cursor csr = dbh.getSaleByDate(dateFinalDB);
                         int todaysTotal=0;
+                        int monthSummation = 0;
+
+                        //get Summation of Monthly sale
+
+                        alDates.clear();
+                        Cursor csrMnSum = dbh.getSaleDatesOfCurrentMonth();
+                        while (csrMnSum.moveToNext()){
+                            alDates.add(csrMnSum.getString(0));
+                        }
+
+                        Cursor csrSales;
+                        for(int i=0;i<alDates.size();i++){
+                            csrSales = dbh.getSaleByDate(alDates.get(i));
+                            int curTotal=0;
+                            while (csrSales.moveToNext()){
+                                int fQty = Integer.parseInt(csrSales.getString(3));
+                                int fPrice = Integer.parseInt(csrSales.getString(2));
+                                int fAmount = (fQty*fPrice);
+                                curTotal = (fAmount+curTotal);
+                            }
+                            monthSummation += curTotal;
+                        }
+
+                        // Monthly Summation Code done!
 
                         String title = "*Patnagar Panipuri "+alSales.get(position).saleDate+"*\n\n";
                         String finalBill=title, item;
@@ -82,7 +107,7 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
                         Intent inShare = new Intent(Intent.ACTION_SEND);
                         inShare.setType("text/plain");
                         inShare.putExtra(Intent.EXTRA_TEXT, finalBill.trim());
-                        inShare.putExtra(Intent.EXTRA_SUBJECT, alSales.get(position).saleDate);
+                        inShare.putExtra(Intent.EXTRA_SUBJECT, alSales.get(position).saleDate+" Today: "+"*"+todaysTotal+"*"+" Monthly: "+"*"+monthSummation+"*");
                         context.startActivity(Intent.createChooser(inShare, "Share"));
                     } catch (Exception e) {
                         Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();

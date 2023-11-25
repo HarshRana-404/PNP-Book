@@ -137,7 +137,7 @@ public class SaleFragment extends Fragment {
                                 refreshRV();
                             }
                         } catch (Exception e) {
-                            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(con, e+"", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
