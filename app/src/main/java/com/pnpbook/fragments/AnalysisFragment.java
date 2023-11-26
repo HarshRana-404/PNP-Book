@@ -66,7 +66,7 @@ public class AnalysisFragment extends Fragment {
         rvAnalysis = view.findViewById(R.id.rv_analysis);
         btnStartDate = view.findViewById(R.id.btn_start_date);
         btnEndDate = view.findViewById(R.id.btn_end_date);
-        tvGrandTotal = view.findViewById(R.id.tv_analysis_grand_total);
+        tvGrandTotal = view.findViewById(R.id.tv_analysis_sale_till_date);
 
         String today[] = SaleFragment.getCurrentDate().split("-");
 
@@ -134,7 +134,7 @@ public class AnalysisFragment extends Fragment {
                 alAnalysis.add(foodName+" - " +foodQty + " x "+foodPrice + " = " + foodTotal);
             }
             if(grandTotal!=0){
-                tvGrandTotal.setText("Grand Total : " + grandTotal);
+                tvGrandTotal.setText("Total: " + grandTotal);
             }
             ArrayAdapter<String> ad = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,  alAnalysis);
             rvAnalysis.setAdapter(ad);

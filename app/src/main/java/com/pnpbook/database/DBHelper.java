@@ -3,6 +3,7 @@ package com.pnpbook.database;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -22,6 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
             db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_price CHAR(100), food_quantity CHAR(10))");
+            db.execSQL("CREATE TABLE stock (purchase_date DATE, item_name CHAR(100), item_quantity CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -31,6 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
             db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100),  food_price CHAR(100), food_quantity CHAR(10))");
+            db.execSQL("CREATE TABLE stock (purchase_date DATE, item_name CHAR(100), item_quantity CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -42,6 +45,43 @@ public class DBHelper extends SQLiteOpenHelper {
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
+    }
+    public void addStockItem(String itemName, String itemQty){
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            itemName = itemName.replaceAll("'", "''");
+            db.execSQL("INSERT INTO stock VALUES('"+getCurrentDate()+"', '"+itemName+"', '"+itemQty+"')");
+        } catch (Exception e) {
+            try{
+                db.execSQL("CREATE TABLE stock (purchase_date DATE, item_name CHAR(100), item_quantity CHAR(10))");
+                db.execSQL("INSERT INTO stock VALUES('"+getCurrentDate()+"', '"+itemName+"', '"+itemQty+"')");
+            } catch (Exception ex) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    public void updateStockItem(String itemNameOG, String itemName, String itemQty, String purchaseDate){
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            itemName = itemName.replaceAll("'", "''");
+            db.execSQL("UPDATE stock set item_name = '"+itemName+"', item_quantity = '"+itemQty+"' WHERE item_name = '"+itemNameOG+"' AND purchase_date = '"+purchaseDate+"'");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public void removeStockItem(String itemName, String itemQty, String purchaseDate){
+        SQLiteDatabase db = getWritableDatabase();
+        try{
+            itemName = itemName.replaceAll("'", "''");
+            db.execSQL("DELETE FROM stock WHERE item_name = '"+itemName+"' AND item_quantity = '"+itemQty+"' AND purchase_date = '"+purchaseDate+"'");
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+    }
+    public Cursor getStockAll(){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor csr = db.rawQuery("SELECT * FROM stock", null);
+        return csr;
     }
     public void removeAll(){
         try{
