@@ -80,6 +80,17 @@ public class AnalysisFragment extends Fragment {
                         public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                             i1 = (i1+1);
                             startDate = i+"-"+i1+"-"+i2;
+                            String[] d = startDate.split("-");
+                            if(Integer.parseInt(d[0])<=9){
+                                d[0] = "0"+d[0];
+                            }
+                            if(Integer.parseInt(d[1])<=9){
+                                d[1] = "0"+d[1];
+                            }
+                            if(Integer.parseInt(d[2])<=9){
+                                d[2] = "0"+d[2];
+                            }
+                            startDate = d[0]+"-"+d[1]+"-"+d[2];
                             btnStartDate.setText(i2+"-"+i1+"-"+i);
                             if(!btnStartDate.getText().toString().endsWith("e") && !btnEndDate.getText().toString().endsWith("e")){
                                 loadAnalysisData();
@@ -99,6 +110,17 @@ public class AnalysisFragment extends Fragment {
                         public void onDateSet(DatePicker datePicker, int i, int i1, int i2) {
                             i1 = (i1+1);
                             endDate = i+"-"+i1+"-"+i2;
+                            String[] d = endDate.split("-");
+                            if(Integer.parseInt(d[0])<=9){
+                                d[0] = "0"+d[0];
+                            }
+                            if(Integer.parseInt(d[1])<=9){
+                                d[1] = "0"+d[1];
+                            }
+                            if(Integer.parseInt(d[2])<=9){
+                                d[2] = "0"+d[2];
+                            }
+                            endDate = d[0]+"-"+d[1]+"-"+d[2];
                             btnEndDate.setText(i2+"-"+i1+"-"+i);
                             if(!btnStartDate.getText().toString().endsWith("e") && !btnEndDate.getText().toString().endsWith("e")){
                                 loadAnalysisData();
@@ -135,9 +157,9 @@ public class AnalysisFragment extends Fragment {
             }
             if(grandTotal!=0){
                 tvGrandTotal.setText("Total: " + grandTotal);
+                ArrayAdapter<String> ad = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,  alAnalysis);
+                rvAnalysis.setAdapter(ad);
             }
-            ArrayAdapter<String> ad = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,  alAnalysis);
-            rvAnalysis.setAdapter(ad);
         } catch (Exception e) {
             Log.e("wow", e+"");
         }

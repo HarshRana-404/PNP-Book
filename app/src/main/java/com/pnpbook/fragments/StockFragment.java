@@ -9,6 +9,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,103 +57,105 @@ public class StockFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_stock, container, false);
         context = view.getContext();
         dbh = new DBHelper(getContext(), null, null,  1, null);
+        try{
+            fabAddNewStock = view.findViewById(R.id.fab_add_new_stock);
+            lvStock = view.findViewById(R.id.lv_stock);
 
-        fabAddNewStock = view.findViewById(R.id.fab_add_new_stock);
-        lvStock = view.findViewById(R.id.lv_stock);
-        refreshLV();
+            fabAddNewStock.setOnClickListener(new View.OnClickListener() {
+                @SuppressLint("SetTextI18n")
+                @Override
+                public void onClick(View view) {
+                    AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
+                    View vAddItem = getLayoutInflater().inflate(R.layout.layout_add_item_ad, container.findViewById(R.id.ad_add_item_root_layout));
+                    DialogInterface di;
 
-        fabAddNewStock.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("SetTextI18n")
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
-                View vAddItem = getLayoutInflater().inflate(R.layout.layout_add_item_ad, container.findViewById(R.id.ad_add_item_root_layout));
-                DialogInterface di;
+                    ImageView ivClose = vAddItem.findViewById((R.id.iv_close));
+                    Button btnAddNewItem = vAddItem.findViewById((R.id.btn_add_new_item));
+                    EditText etItemName = vAddItem.findViewById((R.id.et_item_name));
+                    EditText etItemPrice = vAddItem.findViewById((R.id.et_item_price));
+                    TextView tvADTitle = vAddItem.findViewById(R.id.tv_ad_title);
+                    tvADTitle.setText("Add New Stock Item");
+                    etItemPrice.setHint("Quantity");
 
-                ImageView ivClose = vAddItem.findViewById((R.id.iv_close));
-                Button btnAddNewItem = vAddItem.findViewById((R.id.btn_add_new_item));
-                EditText etItemName = vAddItem.findViewById((R.id.et_item_name));
-                EditText etItemPrice = vAddItem.findViewById((R.id.et_item_price));
-                TextView tvADTitle = vAddItem.findViewById(R.id.tv_ad_title);
-                tvADTitle.setText("Add New Stock Item");
-                etItemPrice.setHint("Quantity");
+                    adb.setView(vAddItem);
+                    di = adb.show();
+                    ivClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            di.dismiss();
+                        }
+                    });
+                    btnAddNewItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String itemName = etItemName.getText().toString()+"";
+                            String itemQty = etItemPrice.getText().toString()+"";
+                            try {
+                                dbh.addStockItem(itemName, itemQty);
+                                refreshLV();
+                                di.dismiss();
+                            } catch (Exception e) {}
+                        }
+                    });
+                }
+            });
 
-                adb.setView(vAddItem);
-                di = adb.show();
-                ivClose.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        di.dismiss();
-                    }
-                });
-                btnAddNewItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String itemName = etItemName.getText().toString()+"";
-                        String itemQty = etItemPrice.getText().toString()+"";
-                        try {
-                            dbh.addStockItem(itemName, itemQty);
+            lvStock.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    String item = alStock.get(i);
+                    String str[];
+                    str = item.split(" x ");
+                    String itemNameOG = str[0];
+                    str = str[1].split(" : ");
+                    String itemQty = str[0];
+                    String date[] = str[1].split("-");
+                    String itemPurchaseDate = date[2]+"-"+date[1]+"-"+date[0];
+                    AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
+                    View vAddItem = getLayoutInflater().inflate(R.layout.layout_add_item_ad, container.findViewById(R.id.ad_add_item_root_layout));
+                    DialogInterface di;
+
+                    ImageView ivClose = vAddItem.findViewById((R.id.iv_close));
+                    Button btnAddNewItem = vAddItem.findViewById((R.id.btn_add_new_item));
+                    EditText etItemName = vAddItem.findViewById((R.id.et_item_name));
+                    EditText etItemPrice = vAddItem.findViewById((R.id.et_item_price));
+                    TextView tvADTitle = vAddItem.findViewById(R.id.tv_ad_title);
+                    ivClose.setImageDrawable(getResources().getDrawable(R.drawable.delete_ic));
+                    btnAddNewItem.setText("SAVE CHANGES");
+                    tvADTitle.setText("Edit Item");
+                    etItemPrice.setHint("Quantity");
+                    etItemName.setText(itemNameOG);
+                    etItemPrice.setText(itemQty);
+
+                    adb.setView(vAddItem);
+                    di = adb.show();
+                    ivClose.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            dbh.removeStockItem(itemNameOG, itemQty, itemPurchaseDate);
                             refreshLV();
                             di.dismiss();
-                        } catch (Exception e) {}
-                    }
-                });
-            }
-        });
-
-        lvStock.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @SuppressLint({"UseCompatLoadingForDrawables", "SetTextI18n"})
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String item = alStock.get(i);
-                String str[];
-                str = item.split(" x ");
-                String itemNameOG = str[0];
-                str = str[1].split(" : ");
-                String itemQty = str[0];
-                String date[] = str[1].split("-");
-                String itemPurchaseDate = date[2]+"-"+date[1]+"-"+date[0];
-                AlertDialog.Builder adb = new AlertDialog.Builder(getContext());
-                View vAddItem = getLayoutInflater().inflate(R.layout.layout_add_item_ad, container.findViewById(R.id.ad_add_item_root_layout));
-                DialogInterface di;
-
-                ImageView ivClose = vAddItem.findViewById((R.id.iv_close));
-                Button btnAddNewItem = vAddItem.findViewById((R.id.btn_add_new_item));
-                EditText etItemName = vAddItem.findViewById((R.id.et_item_name));
-                EditText etItemPrice = vAddItem.findViewById((R.id.et_item_price));
-                TextView tvADTitle = vAddItem.findViewById(R.id.tv_ad_title);
-                ivClose.setImageDrawable(getResources().getDrawable(R.drawable.delete_ic));
-                btnAddNewItem.setText("SAVE CHANGES");
-                tvADTitle.setText("Edit Item");
-                etItemPrice.setHint("Quantity");
-                etItemName.setText(itemNameOG);
-                etItemPrice.setText(itemQty);
-
-                adb.setView(vAddItem);
-                di = adb.show();
-                ivClose.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        dbh.removeStockItem(itemNameOG, itemQty, itemPurchaseDate);
-                        refreshLV();
-                        di.dismiss();
-                    }
-                });
-                btnAddNewItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String itemName = etItemName.getText().toString()+"";
-                        String itemQty = etItemPrice.getText().toString()+"";
-                        try {
-                            dbh.updateStockItem(itemNameOG, itemName, itemQty, itemPurchaseDate);
-                            refreshLV();
-                            di.dismiss();
-                        } catch (Exception e) {}
-                    }
-                });
-            }
-        });
-        
+                        }
+                    });
+                    btnAddNewItem.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            String itemName = etItemName.getText().toString()+"";
+                            String itemQty = etItemPrice.getText().toString()+"";
+                            try {
+                                dbh.updateStockItem(itemNameOG, itemName, itemQty, itemPurchaseDate);
+                                refreshLV();
+                                di.dismiss();
+                            } catch (Exception e) {}
+                        }
+                    });
+                }
+            });
+            refreshLV();
+        } catch (Exception e) {
+            Log.e("wow", e+"");
+        }
         return view;
     }
 
