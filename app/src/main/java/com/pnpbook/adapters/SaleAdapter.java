@@ -85,7 +85,6 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
                             }
                             monthSummation += curTotal;
                         }
-                        Log.e("wow", "3");
                         // Monthly Summation Code done!
 
                         String title = "*Patnagar Panipuri "+alSales.get(position).saleDate+"*\n\n";
@@ -102,7 +101,6 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
                             todaysTotal = (fAmount+todaysTotal);
                             finalBill+=item;
                         }
-                        Log.e("wow", "4");
                         finalBill+="Grand Total: *"+todaysTotal+"*";
                         Intent inShare = new Intent(Intent.ACTION_SEND);
                         inShare.setType("text/plain");
@@ -110,8 +108,7 @@ public class SaleAdapter extends RecyclerView.Adapter<SaleAdapter.ViewHolder> {
                         inShare.putExtra(Intent.EXTRA_SUBJECT, alSales.get(position).saleDate+" Today: "+"*"+todaysTotal+"*"+" Monthly: "+"*"+monthSummation+"*");
                         context.startActivity(Intent.createChooser(inShare, "Share"));
                     } catch (Exception e) {
-                        Log.e("wow", e+"");
-                        Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
                     }
                     return false;
                 }
