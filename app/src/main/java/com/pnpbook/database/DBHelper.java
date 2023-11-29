@@ -38,11 +38,16 @@ public class DBHelper extends SQLiteOpenHelper {
         catch (Exception e) {}
     }
     public void addFoodItem(String foodIndex, String foodName, String foodPrice){
+        SQLiteDatabase db = getWritableDatabase();
         try{
-            SQLiteDatabase db = getWritableDatabase();
             foodName = foodName.replaceAll("'", "''");
             db.execSQL("INSERT INTO food_items VALUES('1', '"+foodName+"', '"+foodPrice+"')");
         } catch (Exception e) {
+            try{
+                db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
+                db.execSQL("INSERT INTO food_items VALUES('1', '"+foodName+"', '"+foodPrice+"')");
+            }catch (Exception ex){}
+
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
@@ -158,11 +163,15 @@ public class DBHelper extends SQLiteOpenHelper {
         }
     }
     public void insertItem(String foodName, String foodQuantity){
+        SQLiteDatabase db = getWritableDatabase();
         try{
-            SQLiteDatabase db = getWritableDatabase();
             foodName = foodName.replaceAll("'", "''");
             db.execSQL("INSERT INTO sale VALUES('"+getCurrentDate()+"', '"+foodName+"', '"+getPriceByFoodName(foodName)+"', '"+foodQuantity+"')");
         } catch (Exception e) {
+            try{
+                db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_price CHAR(100), food_quantity CHAR(10))");
+                db.execSQL("INSERT INTO sale VALUES('"+getCurrentDate()+"', '"+foodName+"', '"+getPriceByFoodName(foodName)+"', '"+foodQuantity+"')");
+            }catch (Exception ex){}
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
