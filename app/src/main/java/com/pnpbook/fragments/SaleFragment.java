@@ -238,7 +238,7 @@ public class SaleFragment extends Fragment {
         if(Integer.parseInt(dt[2])<=9){
             dt[2] = "0"+dt[2];
         }
-        todayDate = dt[0]+dt[1]+dt[2];
+        todayDate = dt[0]+"-"+dt[1]+"-"+dt[2];
         return todayDate;
     }
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
