@@ -235,6 +235,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getSaleDatesOfCurrentMonth(){
         String dt[] = getCurrentDate().split("-");
         String mnYr = dt[0]+"-"+dt[1];
+        Toast.makeText(context, mnYr, Toast.LENGTH_SHORT).show();
         Cursor csr=null;
         try{
             SQLiteDatabase db = getWritableDatabase();
@@ -248,6 +249,17 @@ public class DBHelper extends SQLiteOpenHelper {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String todayDate = sdf.format(cl.getTime());
+        String[] dt = todayDate.split("-");
+        if(Integer.parseInt(dt[0])<=9){
+            dt[0] = "0"+dt[0];
+        }
+        if(Integer.parseInt(dt[1])<=9){
+            dt[1] = "0"+dt[1];
+        }
+        if(Integer.parseInt(dt[2])<=9){
+            dt[2] = "0"+dt[2];
+        }
+        todayDate = dt[0]+dt[1]+dt[2];
         return todayDate;
     }
 
