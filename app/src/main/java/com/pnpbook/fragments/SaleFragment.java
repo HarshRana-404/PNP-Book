@@ -228,7 +228,6 @@ public class SaleFragment extends Fragment {
         Calendar cl = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String todayDate = sdf.format(cl.getTime());
-        Toast.makeText(con, todayDate, Toast.LENGTH_SHORT).show();
         String[] dt = todayDate.split("-");
         if((Integer.parseInt(dt[0])<=9) && (!dt[0].startsWith("0"))){
             dt[0] = "0"+dt[0];
