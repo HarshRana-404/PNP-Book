@@ -258,13 +258,13 @@ public class DBHelper extends SQLiteOpenHelper {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String todayDate = sdf.format(cl.getTime());
         String[] dt = todayDate.split("-");
-        if(Integer.parseInt(dt[0])<=9){
+        if((Integer.parseInt(dt[0])<=9) && (!dt[0].startsWith("0"))){
             dt[0] = "0"+dt[0];
         }
-        if(Integer.parseInt(dt[1])<=9){
+        if((Integer.parseInt(dt[1])<=9) && (!dt[1].startsWith("0"))){
             dt[1] = "0"+dt[1];
         }
-        if(Integer.parseInt(dt[2])<=9){
+        if((Integer.parseInt(dt[2])<=9) && (!dt[2].startsWith("0"))){
             dt[2] = "0"+dt[2];
         }
         todayDate = dt[0]+"-"+dt[1]+"-"+dt[2];
