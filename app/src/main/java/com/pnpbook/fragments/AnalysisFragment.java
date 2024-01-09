@@ -3,6 +3,7 @@ package com.pnpbook.fragments;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -23,6 +24,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.pnpbook.R;
 import com.pnpbook.database.DBHelper;
 
@@ -31,10 +33,14 @@ import java.util.ArrayList;
 public class AnalysisFragment extends Fragment {
 
     Button btnStartDate, btnEndDate;
+
+    FloatingActionButton fabAnalysisShare;
     TextView tvGrandTotal;
     ListView rvAnalysis;
 
     String startDate, endDate;
+
+    String analysisStr="";
     DBHelper dbh = null;
 
     Context context;
@@ -64,6 +70,8 @@ public class AnalysisFragment extends Fragment {
         this.context = view.getContext();
         dbh = new DBHelper(getContext(), null, null,  1, null);
         rvAnalysis = view.findViewById(R.id.rv_analysis);
+        fabAnalysisShare = view.findViewById(R.id.fab_analysis_share);
+        fabAnalysisShare.setVisibility(View.GONE);
         btnStartDate = view.findViewById(R.id.btn_start_date);
         btnEndDate = view.findViewById(R.id.btn_end_date);
         tvGrandTotal = view.findViewById(R.id.tv_analysis_sale_till_date);
@@ -134,12 +142,25 @@ public class AnalysisFragment extends Fragment {
             Log.e("wow", e+"");
         }
 
+        fabAnalysisShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent inShare = new Intent(Intent.ACTION_SEND);
+                inShare.setType("text/plain");
+                inShare.putExtra(Intent.EXTRA_TEXT, analysisStr.trim());
+                inShare.putExtra(Intent.EXTRA_SUBJECT, "Patnagar Panipuri Sale From *"+btnStartDate.getText().toString()+"* To *"+btnEndDate.getText().toString()+"*");
+                context.startActivity(Intent.createChooser(inShare, "Share"));
+            }
+        });
+
         return view;
     }
 
     @SuppressLint("SetTextI18n")
     public void loadAnalysisData(){
         try {
+            analysisStr="Patnagar Panipuri Sale From *"+btnStartDate.getText().toString()+"* To *"+btnEndDate.getText().toString()+"*\n\n";
+            fabAnalysisShare.setVisibility(View.VISIBLE);
             int grandTotal = 0;
             alAnalysis.clear();
             Cursor csr = dbh.getFoodsBetweenDates(startDate, endDate);
@@ -153,10 +174,12 @@ public class AnalysisFragment extends Fragment {
                 }
                 foodTotal = foodQty * foodPrice;
                 grandTotal += foodTotal;
+                analysisStr+=(foodName+" - " +foodQty + " x "+foodPrice + " = " + foodTotal+"\n\n");
                 alAnalysis.add(foodName+" - " +foodQty + " x "+foodPrice + " = " + foodTotal);
             }
             if(grandTotal!=0){
                 tvGrandTotal.setText("Total: " + grandTotal);
+                analysisStr += "Grand Total: "+grandTotal;
                 ArrayAdapter<String> ad = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1,  alAnalysis);
                 rvAnalysis.setAdapter(ad);
             }
