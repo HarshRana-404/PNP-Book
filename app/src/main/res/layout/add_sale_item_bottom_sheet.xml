@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/add_sale_item_bs_root_layout"
-    android:background="@drawable/bs_bg">
+    android:background="@drawable/bs_bg"
+    >
 
     <LinearLayout
         android:layout_width="match_parent"
