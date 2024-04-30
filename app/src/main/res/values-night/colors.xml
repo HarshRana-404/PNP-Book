@@ -2,10 +2,10 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="the_bg_color">#FFFFFF</color>
-    <color name="textview_color">#FF000000</color>
-    <color name="edittext_hint_color">#33555555</color>
-    <color name="text_view_for_food">#601A05</color>
+    <color name="the_bg_color">#2d2d2d</color>
+    <color name="textview_color">#FFFFFFFF</color>
+    <color name="text_view_for_food">#FFFFFFFF</color>
+    <color name="edittext_hint_color">#E0E0E0</color>
     <color name="main_color">#FF1A1A</color>
     <color name="main_color_bu">#22CB5C</color>
     <color name="brown">#601A05</color>

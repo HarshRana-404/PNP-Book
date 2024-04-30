@@ -23,7 +23,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
             db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100), food_price CHAR(100), food_quantity CHAR(10))");
-            db.execSQL("CREATE TABLE stock (purchase_date DATE, item_name CHAR(100), item_quantity CHAR(10))");
+            db.execSQL("CREATE TABLE stock (purchase_date DATE, stock_name CHAR(100), stock_quantity CHAR(10), stock_price CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -33,7 +33,7 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             db.execSQL("CREATE TABLE food_items (food_index CHAR(2), food_name CHAR(100) PRIMARY KEY, food_price CHAR(10))");
             db.execSQL("CREATE TABLE sale (sale_date DATE, food_name CHAR(100),  food_price CHAR(100), food_quantity CHAR(10))");
-            db.execSQL("CREATE TABLE stock (purchase_date DATE, item_name CHAR(100), item_quantity CHAR(10))");
+            db.execSQL("CREATE TABLE stock (purchase_date DATE, stock_name CHAR(100), stock_quantity CHAR(10), stock_price CHAR(10))");
         }
         catch (Exception e) {}
     }
@@ -51,41 +51,42 @@ public class DBHelper extends SQLiteOpenHelper {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
-    public void addStockItem(String itemName, String itemQty){
+    public void addStockItem(String stockName, String stockQty, String stockPrice){
         SQLiteDatabase db = getWritableDatabase();
         try{
-            itemName = itemName.replaceAll("'", "''");
-            db.execSQL("INSERT INTO stock VALUES('"+getCurrentDate()+"', '"+itemName+"', '"+itemQty+"')");
+            stockName = stockName.replaceAll("'", "''");
+            db.execSQL("INSERT INTO stock VALUES('"+getCurrentDate()+"', '"+stockName+"', '"+stockQty+"', '"+stockPrice+"')");
         } catch (Exception e) {
             try{
-                db.execSQL("CREATE TABLE stock (purchase_date DATE, item_name CHAR(100), item_quantity CHAR(10))");
-                db.execSQL("INSERT INTO stock VALUES('"+getCurrentDate()+"', '"+itemName+"', '"+itemQty+"')");
+                db.execSQL("CREATE TABLE stock (purchase_date DATE, stock_name CHAR(100), stock_quantity CHAR(10), stock_price CHAR(10))");
+                db.execSQL("INSERT INTO stock VALUES('"+getCurrentDate()+"', '"+stockName+"', '"+stockQty+"', '"+stockPrice+"')");
             } catch (Exception ex) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+                Log.d("dalle", e+"");
             }
         }
     }
-    public void updateStockItem(String itemNameOG, String itemName, String itemQty, String purchaseDate){
+    public void updateStockItem(String stockNameOG, String stockName, String stockQty, String stockPrice, String purchaseDate){
         SQLiteDatabase db = getWritableDatabase();
         try{
-            itemName = itemName.replaceAll("'", "''");
-            db.execSQL("UPDATE stock set item_name = '"+itemName+"', item_quantity = '"+itemQty+"' WHERE item_name = '"+itemNameOG+"' AND purchase_date = '"+purchaseDate+"'");
+            stockName = stockName.replaceAll("'", "''");
+            db.execSQL("UPDATE stock set stock_name = '"+stockName+"', stock_quantity = '"+stockQty+"', stock_price = '"+stockPrice+"' WHERE stock_name = '"+stockNameOG+"' AND purchase_date = '"+purchaseDate+"'");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
-    public void removeStockItem(String itemName, String itemQty, String purchaseDate){
+    public void removeStockItem(String stockName, String stockQty, String stockPrice, String purchaseDate){
         SQLiteDatabase db = getWritableDatabase();
         try{
-            itemName = itemName.replaceAll("'", "''");
-            db.execSQL("DELETE FROM stock WHERE item_name = '"+itemName+"' AND item_quantity = '"+itemQty+"' AND purchase_date = '"+purchaseDate+"'");
+            stockName = stockName.replaceAll("'", "''");
+            db.execSQL("DELETE FROM stock WHERE stock_name = '"+stockName+"' AND stock_quantity = '"+stockQty+"' AND purchase_date = '"+purchaseDate+"' AND stock_price = '"+stockPrice+"'");
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }
     }
     public Cursor getStockAll(){
         SQLiteDatabase db = getWritableDatabase();
-        Cursor csr = db.rawQuery("SELECT * FROM stock", null);
+        Cursor csr = db.rawQuery("SELECT * FROM stock ORDER BY purchase_date DESC", null);
         return csr;
     }
     public void removeAll(){
@@ -112,6 +113,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public Cursor getSaleByDate(String saleDate){
         SQLiteDatabase db = getWritableDatabase();
         Cursor csr = db.rawQuery("SELECT * FROM sale WHERE sale_date = '"+saleDate+"'", null);
+        return csr;
+    }
+    public Cursor getStockByDate(String purchaseDate){
+        SQLiteDatabase db = getWritableDatabase();
+        Cursor csr = db.rawQuery("SELECT * FROM stock WHERE purchase_date = '"+purchaseDate+"'", null);
         return csr;
     }
 
@@ -248,6 +254,30 @@ public class DBHelper extends SQLiteOpenHelper {
         try{
             SQLiteDatabase db = getWritableDatabase();
             csr = db.rawQuery("SELECT sale_date FROM sale WHERE sale_date LIKE '%"+mnYr+"%' GROUP BY sale_date ORDER BY sale_date DESC", null);
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+        return csr;
+    }
+    public Cursor getSaleDatesOfSpecifiedMonth(String monthYear){
+        String dt[] = getCurrentDate().split("-");
+        String mnYr = monthYear;
+        Cursor csr=null;
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            csr = db.rawQuery("SELECT sale_date FROM sale WHERE sale_date LIKE '%"+mnYr+"%' GROUP BY sale_date ORDER BY sale_date DESC", null);
+        } catch (Exception e) {
+//            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
+        }
+        return csr;
+    }
+    public Cursor getStockDatesOfSpecifiedMonth(String monthYear){
+        String dt[] = getCurrentDate().split("-");
+        String mnYr = monthYear;
+        Cursor csr=null;
+        try{
+            SQLiteDatabase db = getWritableDatabase();
+            csr = db.rawQuery("SELECT purchase_date FROM stock WHERE purchase_date LIKE '%"+mnYr+"%' GROUP BY purchase_date ORDER BY purchase_date DESC", null);
         } catch (Exception e) {
 //            Toast.makeText(context, e+"", Toast.LENGTH_SHORT).show();
         }

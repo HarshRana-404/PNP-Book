@@ -39,9 +39,10 @@
                 android:layout_centerVertical="true"
                 android:textStyle="bold"
                 android:textSize="20sp"
-                android:textColor="@color/brown"
                 android:text="Dahi Puri"
-                android:layout_marginRight="64dp"/>
+                android:layout_marginRight="64dp"
+                android:textColor="@color/text_view_for_food"
+                />
 
             <TextView
                 android:id="@+id/tv_food_price"
@@ -49,12 +50,13 @@
                 android:layout_height="wrap_content"
                 android:textSize="20sp"
                 android:textStyle="bold"
-                android:textColor="@color/brown"
                 android:text="₹50/-"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/price_bg"
                 android:paddingVertical="4dp"
-                android:paddingHorizontal="8dp"/>
+                android:paddingHorizontal="8dp"
+                android:textColor="@color/text_view_for_food"
+                />
 
         </RelativeLayout>
     </LinearLayout>

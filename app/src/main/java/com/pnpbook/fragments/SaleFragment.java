@@ -217,7 +217,7 @@ public class SaleFragment extends Fragment {
             while (csr.moveToNext()){
                 alFoodItems.add(csr.getString(1));
             }
-            spFoodItem.setAdapter(new ArrayAdapter<String>(con, android.R.layout.simple_list_item_1, alFoodItems));
+            spFoodItem.setAdapter(new ArrayAdapter<String>(con, R.layout.spinner_item_ui, R.id.tv_spinner_item, alFoodItems));
         } catch (Exception e) {
         }
     }

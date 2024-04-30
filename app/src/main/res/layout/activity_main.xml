@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    android:background="@color/the_bg_color">
 
     <FrameLayout
         android:id="@+id/fl_main_container"
@@ -19,6 +20,8 @@
         android:layout_height="wrap_content"
         app:menu="@menu/bottom_nav_items"
         android:layout_alignParentBottom="true"
-        android:background="@color/white"/>
+        android:background="@color/the_bg_color"
+        app:itemTextColor="@color/textview_color"
+        />
 
 </RelativeLayout>

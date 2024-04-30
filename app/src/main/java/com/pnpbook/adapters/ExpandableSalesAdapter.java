@@ -3,6 +3,7 @@ package com.pnpbook.adapters;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -75,6 +76,10 @@ public class ExpandableSalesAdapter extends RecyclerView.Adapter<ExpandableSales
                     Button btnAddNewItem = vAddItem.findViewById((R.id.btn_add_new_item));
                     EditText etItemName = vAddItem.findViewById((R.id.et_item_name));
                     EditText etItemPrice = vAddItem.findViewById((R.id.et_item_price));
+                    Drawable icEdit = context.getResources().getDrawable(R.drawable.edit_ic);
+                    icEdit.setTint(context.getResources().getColor(R.color.main_color));
+                    icEdit.setBounds(0, 0, 60, 60);
+                    tvAddTitle.setCompoundDrawables(icEdit, null, null, null);
 
                     etItemName.setEnabled(false);
                     etItemPrice.setHint("Quantity");

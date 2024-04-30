@@ -45,7 +45,6 @@ public class AnalysisFragment extends Fragment {
 
     Context context;
 
-
     ArrayList<String> alAnalysis = new ArrayList<>();
     public AnalysisFragment() {
         // Required empty public constructor

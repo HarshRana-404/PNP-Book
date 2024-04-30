@@ -6,28 +6,55 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".fragments.StockFragment"
     android:layout_marginBottom="32dp"
+    android:background="@color/the_bg_color"
     >
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/abl_stock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/main_color">
+        android:id="@+id/abl_stock">
 
         <Toolbar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:background="@color/main_color">
 
-            <TextView
-                android:id="@+id/tv_stock_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Stock"
-                android:textStyle="bold"
-                android:textSize="25sp"
-                android:layout_centerHorizontal="true"
-                android:textColor="@color/white"
-                />
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:text="Stock"
+                    android:textStyle="bold"
+                    android:textSize="21sp"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    />
+                <TextView
+                    android:id="@+id/tv_abl_pl"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:left="@drawable/add_ic"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="16dp"
+                    android:drawableLeft="@drawable/rupee_ic"
+                    android:drawablePadding="8dp"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:text="Profit and Loss"
+                    android:textColor="@color/white"
+                    android:layout_centerVertical="true"
+                    android:clickable="true"
+                    android:background="?attr/selectableItemBackground"
+                    android:paddingVertical="4dp"
+                    android:paddingHorizontal="8dp"
+                    />
+
+            </RelativeLayout>
+
         </Toolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
@@ -39,6 +66,7 @@
         android:layout_below="@id/abl_stock"
         android:layout_above="@id/fab_add_new_stock"
         android:padding="20dp"
+        android:background="@color/the_bg_color"
         >
 
     </ListView>
